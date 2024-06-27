@@ -233,16 +233,16 @@
 /**
  * A random string used in security hashing methods.
  */
-	$securitySalt = bin2hex(random_bytes(32));
+	// $securitySalt = bin2hex(random_bytes(32));
 
-	Configure::write('Security.salt', $securitySalt);
+	// Configure::write('Security.salt', $securitySalt);
 
 /**
  * A random numeric string (digits only) used to encrypt/decrypt strings.
  */
-	$cipherSeed = rand(100000, 999999); // Generates a random number between 100000 and 999999
+	// $cipherSeed = rand(100000, 999999); // Generates a random number between 100000 and 999999
 
-	Configure::write('Security.cipherSeed', $cipherSeed);
+	// Configure::write('Security.cipherSeed', $cipherSeed);
 
 /**
  * Apply timestamps with the last modified time to static assets (js, css, images).

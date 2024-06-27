@@ -16,7 +16,7 @@ class User extends AppModel {
 		'name' => array(
 			'notBlank' => array(
 				'rule' => array('notBlank'),
-				'message' => 'name cannot be empty',
+				'message' => 'Name cannot be empty',
 				'required' => true,
 			),
 		),
@@ -49,54 +49,77 @@ class User extends AppModel {
 				'message' => 'Password must be at least 6 characters long',
 			),
 		),
-	// 	'confirm_password' => array(
-    //     'compare' => array(
-    //         'rule' => array('comparePasswords', 'password'),
-    //         'message' => 'Passwords do not match',
-    //     ),
-    // ),
-
+		'confirm_password' => array(
+			'compare' => array(
+				'rule' => array('comparePasswords', 'password'),
+				'message' => 'Passwords do not match',
+			),
+		),
+		'image' => array(
+			'extension' => array(
+				'rule' => array('extension', array('jpg', 'jpeg', 'gif', 'png')),
+				'message' => 'Please upload valid image file (jpg, jpeg, gif, png)',
+			
+			),
+		),
+		'gender' => array(
+			'notBlank' => array(
+				'rule' => array('notBlank'),
+				'message' => 'Gender cannot be empty',
+				'required' => false,
+			),
+		),
+		'birthdate' => array(
+			'notBlank' => array(
+				'rule' => array('notBlank'),
+				'message' => 'Birthdate cannot be empty',
+				'required' => false,
+			),
+			'date' => array(
+				'rule' => array('date'),
+				'message' => 'Please enter a valid date',
+			),
+		),
+		'hobby' => array(
+			'notBlank' => array(
+				'rule' => array('notBlank'),
+				'message' => 'Hobby cannot be empty',
+				'required' => false,
+			),
+		)
 	);
 
+
+
+
 	public function beforeSave($options = array()) {
-        if (isset($this->data[$this->alias]['password'])) {
+        if (!empty($this->data[$this->alias]['password'])) {
             $this->data[$this->alias]['password'] = AuthComponent::password(
                 $this->data[$this->alias]['password']
             );
         }
+        if (isset($this->data[$this->alias]['confirm_password'])) {
+            $this->data[$this->alias]['confirm_password'] = AuthComponent::password(
+                $this->data[$this->alias]['confirm_password']
+            );
+        }
+        // Set date_created and date_updated
+        if (empty($this->data[$this->alias]['date_created'])) {
+            $this->data[$this->alias]['date_created'] = date('Y-m-d H:i:s');
+        }
+        $this->data[$this->alias]['date_updated'] = date('Y-m-d H:i:s');
+		
         return true;
     }
 
-
-
-	// public function beforeSave($options = array()) {
-    //     if (!empty($this->data[$this->alias]['password'])) {
-    //         $this->data[$this->alias]['password'] = AuthComponent::password(
-    //             $this->data[$this->alias]['password']
-    //         );
-    //     }
-    //     if (isset($this->data[$this->alias]['confirm_password'])) {
-    //         $this->data[$this->alias]['confirm_password'] = AuthComponent::password(
-    //             $this->data[$this->alias]['confirm_password']
-    //         );
-    //     }
-    //     // Set date_created and date_updated
-    //     if (empty($this->data[$this->alias]['date_created'])) {
-    //         $this->data[$this->alias]['date_created'] = date('Y-m-d H:i:s');
-    //     }
-    //     $this->data[$this->alias]['date_updated'] = date('Y-m-d H:i:s');
-		
-    //     return true;
-    // }
-
-	// public function comparePasswords($checkPassword, $passwordFieldName) {
-    //     if (is_array($checkPassword)) {
-    //         $confirmPassword = current($checkPassword);
-    //     } else {
-    //         $confirmPassword = $checkPassword;
-    //     }
-    //     $enteredPassword = $this->data[$this->alias][$passwordFieldName];
-    //     return $confirmPassword === $enteredPassword;
-    // }
+	public function comparePasswords($checkPassword, $passwordFieldName) {
+        if (is_array($checkPassword)) {
+            $confirmPassword = current($checkPassword);
+        } else {
+            $confirmPassword = $checkPassword;
+        }
+        $enteredPassword = $this->data[$this->alias][$passwordFieldName];
+        return $confirmPassword === $enteredPassword;
+    }
 
 }

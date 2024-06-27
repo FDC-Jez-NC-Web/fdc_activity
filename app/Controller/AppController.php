@@ -36,6 +36,10 @@ class AppController extends Controller {
     public $components = array(
         'Session',
         'Auth' => array(
+            'loginAction' => array(
+                'controller' => 'users',
+                'action' => 'login'
+            ),
             'loginRedirect' => array('controller' => 'users', 'action' => 'dashboard'),
             'logoutRedirect' => array('controller' => 'users', 'action' => 'login'),
             'authenticate' => array(
@@ -43,12 +47,14 @@ class AppController extends Controller {
                     'userModel' => 'User',
                     'fields' => array('username' => 'email', 'password' => 'password')
                 )
-            ),
-            'authorize' => array('Controller') 
-      
+            )
         )
     );
 
+
+    public function isAuthorized($user) {
+        return true;
+    }
 
     public function beforeFilter() {
         $this->Auth->allow( 'register', 'thankyou','login');
